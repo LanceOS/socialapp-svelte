@@ -4,6 +4,7 @@ import Pocketbase from "pocketbase"
 interface IPB {
     email: string;
     password: string;
+    confirmPassword?: string;
 }
 
 
@@ -21,35 +22,31 @@ class PBClient {
     static auth = {
 
         async signIn({ email, password }: IPB) {
-
-            try {
-                const session = await PBClient.db.collection('users').authWithPassword(
-                    email,
-                    password,
-                );
-
-                if (session) return session;
-            }
-            catch (err) {
-                throw new Error(err);
-            }
+            const session = await PBClient.db.collection('users').authWithPassword(
+                email,
+                password,
+            );
+            
+            if (session) return session;
         },
 
 
         async register(data: IPB) {
 
             try {
-                await PBClient.db.collection('users').create(data);
 
+                const response = await PBClient.db.collection('users').create(data);
+            
                 const session = await PBClient.db.collection('users').authWithPassword(
                     data.email,
                     data.password
                 )
-
+            
+                console.log("Created new user:", response)
+                console.log("Returning user session:", session)
                 if (session) return session;
-            }
-            catch (err) {
-                throw new Error(err)
+            } catch(e) {
+                console.log(e)
             }
         }
     }
