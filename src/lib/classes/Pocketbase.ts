@@ -10,7 +10,7 @@ interface IPB {
 class PBClient {
     instance: PBClient | null = null;
 
-    static pb = new Pocketbase(PUBLIC_POCKETBASE_URL)
+    static db = new Pocketbase(PUBLIC_POCKETBASE_URL)
 
     constructor() {
         if (this.instance) return this.instance;
@@ -20,27 +20,37 @@ class PBClient {
 
     static auth = {
 
-        async login({ email, password }: IPB) {
-            const session = await PBClient.pb.collection('users').authWithPassword(
-                email,
-                password,
-            );
+        async signIn({ email, password }: IPB) {
 
-            console.log(session)
+            try {
+                const session = await PBClient.db.collection('users').authWithPassword(
+                    email,
+                    password,
+                );
 
-            if (session) return session;
+                if (session) return session;
+            }
+            catch (err) {
+                throw new Error(err);
+            }
         },
 
 
         async register(data: IPB) {
-            await PBClient.pb.collection('users').create(data);
 
-            const session = await PBClient.pb.collection('users').authWithPassword(
-                data.email,
-                data.password
-            )
+            try {
+                await PBClient.db.collection('users').create(data);
 
-            if (session) return session;
+                const session = await PBClient.db.collection('users').authWithPassword(
+                    data.email,
+                    data.password
+                )
+
+                if (session) return session;
+            }
+            catch (err) {
+                throw new Error(err)
+            }
         }
     }
 }
