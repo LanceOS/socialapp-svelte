@@ -2,12 +2,19 @@
 	import PBClient from '$lib/classes/Pocketbase.js';
 
 	let validations = $state({
+		username: '',
 		email: '',
 		password: '',
-		passwordConfirm: ''
+		passwordConfirm: '',
 	});
 
+	let formState = $state(1)
+
 	async function register(data: any) {
+		if(formState === 1) {
+			formState + 1
+		}
+
 		const session = await PBClient.auth.register(data);
 		if (session) return session;
 	}
@@ -21,12 +28,24 @@
 	>
 		<div class="flex flex-col gap-6 w-full">
 			<div class="py-2 px-4 bg-gray-200 flex flex-col">
+				<label for="username mb-2">Username <span class="text-red-500">*</span></label>
+				<input
+					type="text"
+					name="username"
+					aria-label="Enter your email"
+					bind:value={validations.username}
+					placeholder="johndoe1234"
+					class="focus:outline-0"
+				/>
+			</div>
+			<div class="py-2 px-4 bg-gray-200 flex flex-col">
 				<label for="email">Email <span class="text-red-500">*</span></label>
 				<input
 					type="email"
 					name="email"
 					aria-label="Enter your email"
 					bind:value={validations.email}
+					placeholder="example@gmail.com"
 					class="focus:outline-0"
 				/>
 			</div>

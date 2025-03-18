@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import PBClient from '$lib/classes/Pocketbase.js';
 
 	const validations = $state({
@@ -6,10 +7,9 @@
 		password: ''
 	});
 
-	async function signIn(data: obj) {
-		const session = await PBClient.auth.signIn(data);
-		console.log(session);
-		if (session) return session;
+	async function signIn(data: any) {
+		await PBClient.auth.signIn(data);
+		goto('/');
 	}
 </script>
 
@@ -17,12 +17,12 @@
 	<h1 class="text-2xl sm:text-4xl font-bold">Svelte App</h1>
 	<form
 		action="signin"
-		class="bg-white w-full sm:w-xl flex flex-col gap-12 items-center px-8 py-16 rounded-lg w-fit"
+		class="bg-white w-full sm:w-xl flex flex-col gap-12 items-center px-8 py-16 rounded-lg"
 		onsubmit={() => signIn(validations)}
 	>
 		<div class="w-full flex flex-col gap-6">
 			<div class="flex flex-col gap-2 bg-gray-200 py-2 px-4">
-				<label>Email <span class="text-red-500">*</span></label>
+				<label for="email">Email <span class="text-red-500">*</span></label>
 				<input
 					type="email"
 					name="email"
