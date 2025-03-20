@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { render } from 'svelte/server';
-
 	// list of uploaded images from input
 	let uploadedImages: FileList[] = $state([]);
 
 	// processed image
-	let renderedImage: string[] = $state([]);
+	let renderedImages: string[] = $state([]);
 
 	function handleFileUpload(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -20,65 +18,109 @@
 		}
 	}
 
-	let body = $state();
+	let body = $state('');
 
-	// view state
-	let previewImage = $state(false);
-
+	// process file and add data url to renderedImage array
 	function processFile(file: File) {
 		const reader = new FileReader();
 
 		reader.onload = (event) => {
 			if (event.target?.result) {
-				renderedImage = [...renderedImage, event.target.result as string];
+				renderedImages = [...renderedImages, event.target.result as string];
 			}
 		};
 
 		reader.readAsDataURL(file);
 	}
 
-	function changePreview() {
-		previewImage = !previewImage;
+	function deleteImage(index: number) {
+		uploadedImages = uploadedImages.filter((_, i) => i !== index);
+		renderedImages = renderedImages.filter((_, i) => i !== index);
 	}
+
+	let counter = $state(false);
 </script>
 
 <section class="border-2 h-fit p-4">
 	<form class="flex flex-col gap-2" action="">
-		<textarea
-			placeholder="What's on your mind?"
-			aria-label="Create your post body"
-			class="w-full h-10 focus:outline-0 focus:h-52 leading-normal bg-base-300 rounded-lg py-2 px-6 resize-none overflow-hidden"
-			bind:value={body}
-		></textarea>
-		{#if renderedImage}
-			<button
-				onclick={changePreview}
-				class="cursor-pointer bg-primary rounded-lg text-primary-content w-32 py-2 px-6"
+		<div class="h-fit flex items-center relative">
+			<textarea
+				placeholder="What's on your mind?"
+				aria-label="Create your post body"
+				class="w-full h-10 focus:outline-0 focus:h-52 transition-all duration-150 leading-normal bg-base-300 rounded-lg py-2 px-6 resize-none overflow-hidden"
+				bind:value={body}
+				onfocus={() => (counter = !counter)}
+				onfocusout={() => (counter = !counter)}
 			>
-				Preview
-			</button>
-			{#if previewImage}
-				<div class="flex flex-row gap-4 overflow-y-none overflow-x-auto">
-					{#each renderedImage as image}
-						<img src={image} alt="Your image" aria-label="" class="h-24" />
-					{/each}
-				</div>
+			</textarea>
+			{#if counter}
+				<p
+					class={`absolute py-2 px-4 self-end ${body.length < 400 ? 'text-info' : 'text-error'} right-0`}
+				>
+					{body.length}/400
+				</p>
 			{/if}
+		</div>
+
+		{#if renderedImages}
+			<div class="flex flex-row gap-4 overflow-y-none overflow-x-auto">
+				{#each renderedImages as image, index}
+					<div class="relative border-2">
+						<button
+							type="button"
+							aria-label="Remove image from post"
+							class="absolute flex items-center justify-center bg-white cursor-pointer text-sm font-bold h-6 w-6 p-2 rounded-full top-2 right-2"
+							onclick={() => deleteImage(index)}>X</button
+						>
+						<img src={image} alt="" class="h-52" />
+					</div>
+				{/each}
+			</div>
 		{/if}
 
 		<div class="flex gap-4">
 			<button
 				type="submit"
-				class="bg-primary text-primary-content py-2 px-6 rounded-lg cursor-pointer"
-				>Create Post</button
+				aria-label="Create Post"
+				class="bg-neutral text-white py-2 px-6 rounded-lg cursor-pointer">Create Post</button
 			>
 			<input
+				id="file-input"
 				placeholder="Upload Image"
 				type="file"
+				accept="image/*"
 				aria-label="Upload a selected image (Optional)"
-				class="p-2 bg-base-300 rounded-lg cursor-pointer"
+				class="p-2 bg-base-300 rounded-lg cursor-pointer hidden"
 				onchange={handleFileUpload}
 			/>
+			<button
+				type="button"
+				class="cursor-pointer bg-neutral rounded-lg w-12 flex justify-center items-center text-white"
+				aria-label="Upload Image"
+				onclick={() => document.getElementById('file-input')?.click()}
+			>
+				<svg
+					width="25"
+					height="25"
+					viewBox="0 0 24 24"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<rect
+						x="3"
+						y="7"
+						width="18"
+						height="12"
+						rx="2"
+						ry="2"
+						stroke="white"
+						stroke-width="1"
+						fill="none"
+					/>
+					<circle cx="12" cy="13" r="4" stroke="white" stroke-width="1" fill="none" />
+					<path d="M8 7L10 4H14L16 7" stroke="white" stroke-width="1" fill="none" />
+				</svg>
+			</button>
 		</div>
 	</form>
 </section>

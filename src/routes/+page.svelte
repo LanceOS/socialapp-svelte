@@ -7,7 +7,7 @@
 	const isAuthed = $derived(App.user.isAuthed());
 </script>
 
-<div class="flex flex-col md:flex-row max-w-7xl mx-auto bg-base-100 text-base-content">
+<div class="flex flex-col md:flex-row max-w-7xl mx-auto text-base-content">
 	<Nav />
 	<main class="border-2 min-h-screen w-full flex">
 		<!-- post section -->
