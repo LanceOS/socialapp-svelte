@@ -1,47 +1,55 @@
 <script lang="ts">
-	// list of uploaded images from input
-	let uploadedImages: FileList | undefined = $state();
+	import { render } from 'svelte/server';
 
-	// content text body of post
-	let body = $state('');
+	// list of uploaded images from input
+	let uploadedImages: FileList[] = $state([]);
 
 	// processed image
-	let renderedImage = $state();
+	let renderedImage: string[] = $state([]);
+
+	function handleFileUpload(event: Event) {
+		const target = event.target as HTMLInputElement;
+		if (target.files) {
+			const newFiles = Array.from(target.files);
+
+			// convert FileList to an array and merge with current state
+			uploadedImages = [...uploadedImages, ...newFiles];
+
+			// process each new file
+			newFiles.forEach(processFile);
+		}
+	}
+
+	let body = $state();
 
 	// view state
 	let previewImage = $state(false);
 
-	function renderFile() {
-		const file = uploadedImages![0];
-
-		if (!file) throw new Error('Failed to render new file');
-
+	function processFile(file: File) {
 		const reader = new FileReader();
 
 		reader.onload = (event) => {
-			renderedImage = event.target?.result;
+			if (event.target?.result) {
+				renderedImage = [...renderedImage, event.target.result as string];
+			}
 		};
 
 		reader.readAsDataURL(file);
-
-		return;
 	}
 
 	function changePreview() {
 		previewImage = !previewImage;
 	}
-
-	function createPost() {}
 </script>
 
 <section class="border-2 h-fit p-4">
 	<form class="flex flex-col gap-2" action="">
-		<input
-			placeholder="Create Post"
+		<textarea
+			placeholder="What's on your mind?"
 			aria-label="Create your post body"
-			class="w-full focus:outline-0 bg-base-300 rounded-lg py-2 px-6"
+			class="w-full h-10 focus:outline-0 focus:h-52 leading-normal bg-base-300 rounded-lg py-2 px-6 resize-none overflow-hidden"
 			bind:value={body}
-		/>
+		></textarea>
 		{#if renderedImage}
 			<button
 				onclick={changePreview}
@@ -50,7 +58,11 @@
 				Preview
 			</button>
 			{#if previewImage}
-				<img src={renderedImage} alt="Your image" aria-label="" class="h-full" />
+				<div class="flex flex-row gap-4 overflow-y-none overflow-x-auto">
+					{#each renderedImage as image}
+						<img src={image} alt="Your image" aria-label="" class="h-24" />
+					{/each}
+				</div>
 			{/if}
 		{/if}
 
@@ -65,8 +77,7 @@
 				type="file"
 				aria-label="Upload a selected image (Optional)"
 				class="p-2 bg-base-300 rounded-lg cursor-pointer"
-				bind:files={uploadedImages}
-				onchange={() => renderFile()}
+				onchange={handleFileUpload}
 			/>
 		</div>
 	</form>
