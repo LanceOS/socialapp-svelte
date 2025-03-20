@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { render } from 'svelte/server';
-
 	// list of uploaded images from input
 	let uploadedImages: FileList | undefined = $state();
 
@@ -12,11 +10,6 @@
 
 	// view state
 	let previewImage = $state(false);
-
-	let form = {
-		uploadedImages,
-		body
-	};
 
 	function renderFile() {
 		const file = uploadedImages![0];
@@ -51,13 +44,13 @@
 		/>
 		{#if renderedImage}
 			<button
-				on:click={changePreview}
+				onclick={changePreview}
 				class="cursor-pointer bg-primary rounded-lg text-primary-content w-32 py-2 px-6"
 			>
 				Preview
 			</button>
 			{#if previewImage}
-				<img src={renderedImage} alt="Your image" class="h-full" />
+				<img src={renderedImage} alt="Your image" aria-label="" class="h-full" />
 			{/if}
 		{/if}
 
@@ -73,7 +66,7 @@
 				aria-label="Upload a selected image (Optional)"
 				class="p-2 bg-base-300 rounded-lg cursor-pointer"
 				bind:files={uploadedImages}
-				on:change={() => renderFile()}
+				onchange={() => renderFile()}
 			/>
 		</div>
 	</form>

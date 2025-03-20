@@ -9,7 +9,7 @@
 		</div>
 		<div class="flex gap-2">
 			<button
-				class="cursor-pointer rounded-lg text-white py-2 px-4"
+				class="cursor-pointer rounded-lg bg-base-300 py-2 px-4"
 				aria-label="Go to sign in page"
 				onclick={() => goto('/signin')}
 			>
