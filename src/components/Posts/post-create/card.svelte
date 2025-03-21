@@ -46,18 +46,24 @@
 		console.log(uploadedImages);
 	});
 
-	async function submitNewPost() {
-		const data = {
-			body: body,
-			images: uploadedImages
-		};
+	async function submitNewPost(event: any) {
+		event.preventDefault();
 
-		await Posts.create(data);
+		try {
+			const data = {
+				body: body,
+				images: uploadedImages
+			};
+
+			await Posts.create(data);
+		} catch (e) {
+			console.log(e);
+		}
 	}
 </script>
 
 <section class="border-2 h-fit p-4">
-	<form class="flex flex-col gap-2" onsubmit={submitNewPost}>
+	<form class="flex flex-col gap-2" method="POST" onsubmit={(event) => submitNewPost(event)}>
 		<div class="h-fit flex items-center relative">
 			<textarea
 				placeholder="What's on your mind?"

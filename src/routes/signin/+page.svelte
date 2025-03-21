@@ -7,7 +7,8 @@
 		password: ''
 	});
 
-	async function signIn(data: any) {
+	async function signIn(data: any, event: any) {
+		event.preventDefault();
 		await PBClient.auth.signIn(data);
 		goto('/');
 	}
@@ -16,9 +17,8 @@
 <main class="h-screen bg-gray-50 flex flex-col py-12 px-4 gap-4 items-center justify-center">
 	<h1 class="text-2xl sm:text-4xl font-bold">Svelte App</h1>
 	<form
-		action="signin"
 		class="bg-white w-full sm:w-xl flex flex-col gap-12 items-center px-8 py-16 rounded-lg"
-		onsubmit={() => signIn(validations)}
+		onsubmit={(event) => signIn(validations, event)}
 	>
 		<div class="w-full flex flex-col gap-6">
 			<div class="flex flex-col gap-2 bg-gray-200 py-2 px-4">

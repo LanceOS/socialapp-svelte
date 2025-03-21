@@ -1,10 +1,12 @@
 <script>
-	import App from '$lib/classes/Auth.js';
+	import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+	import Pocketbase from 'pocketbase';
+	import App from '$lib/classes/App.js';
 	import Nav from '../components/navbar/nav.svelte';
 	import CreatePost from '../components/Posts/post-create/card.svelte';
 
-	const user = $derived(App.user.retrieve());
-	const isAuthed = $derived(App.user.isAuthed());
+	const db = new Pocketbase(PUBLIC_POCKETBASE_URL);
+	const isAuthed = db.authStore.isValid;
 </script>
 
 <div class="flex flex-col md:flex-row max-w-7xl mx-auto text-base-content">
