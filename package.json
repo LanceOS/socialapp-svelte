@@ -13,7 +13,8 @@
 		"test": "npm run test:e2e",
 		"format": "prettier --write .",
 		"lint": "prettier --check .",
-		"pb": "./pocketbase/pocketbase serve --http=127.0.0.0:8090"
+		"pb": "./pocketbase/pocketbase serve --http=127.0.0.0:8090",
+		"squash": "./pocketbase/pocketbase migrate collections"
 	},
 	"files": [
 		"dist",
@@ -56,6 +57,8 @@
 		"svelte"
 	],
 	"dependencies": {
+		"@tanstack/svelte-query": "^5.69.0",
+		"axios": "^1.8.4",
 		"pocketbase": "^0.25.2"
 	}
 }

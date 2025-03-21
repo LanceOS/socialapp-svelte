@@ -29,7 +29,6 @@ class PBClient {
         // Signin with pocketbase auth then return session
         async signIn({ email, password }: IPB) {
 
-
             try {
                 const session = await PBClient.db.collection('users').authWithPassword(
                     email,

@@ -1,7 +1,7 @@
 <script>
-	import App from '$lib/classes/App.js';
-	import Nav from '../components/navbar/+page.svelte';
-	import CreatePost from '../components/Posts/post-create/+page.svelte';
+	import App from '$lib/classes/Auth.js';
+	import Nav from '../components/navbar/nav.svelte';
+	import CreatePost from '../components/Posts/post-create/card.svelte';
 
 	const user = $derived(App.user.retrieve());
 	const isAuthed = $derived(App.user.isAuthed());
@@ -15,8 +15,8 @@
 			{#if isAuthed}
 				<CreatePost />
 			{:else}
-				<section>
-					<p>Placeholder</p>
+				<section class="flex items-center justify-center w-full h-24">
+					<p>Loading...</p>
 				</section>
 			{/if}
 		</div>
